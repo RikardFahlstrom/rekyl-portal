@@ -22,8 +22,8 @@ def setup_browser() -> webdriver:
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--disable-gpu')
 
-    # browser = webdriver.Chrome(executable_path="/Users/rikardfahlstrom/Documents/python_projects/selenium_drivers/chromedriver", options=options)
     browser = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=options)
+    #browser = webdriver.Remote("http://0.0.0.0:4444/wd/hub", DesiredCapabilities.CHROME, options=options)
     logging.info('Browser object created')
 
     return browser
@@ -62,16 +62,21 @@ def download_data(browser: webdriver, configs: configparser.ConfigParser) -> Bea
     return soup
 
 
-def extract_and_transform_data(soup: BeautifulSoup) -> List[Dict]:
-    all_errands = []
-    table = soup.find('table')
+def get_table_rows_from_soup(page_soup):
+    table = page_soup.find('table')
     table_body = table.find('tbody')
 
     table_rows = table_body.find_all('tr')  # <tr> define table rows
 
-    for table_row in table_rows:
+    return table_rows
+
+
+def transform_table_rows(all_table_rows) -> List[Dict]:
+    all_errands = []
+
+    for table_row in all_table_rows:
         row_values = table_row.find_all('td')  # <td> is table cells
-        if row_values:
+        if len(row_values) > 0:
             row_values = [row_value.text.strip() for row_value in row_values]
             row_values = [y for x in row_values for y in x.split(':')]
             row_values[3] = re.sub(' +', ' ', row_values[3])
@@ -101,5 +106,6 @@ if __name__ == '__main__':
     configs = load_config_file()
     browser = setup_browser()
     soup = download_data(browser, configs)
-    all_errands = extract_and_transform_data(soup)
+    all_table_rows = get_table_rows_from_soup(soup)
+    all_errands = transform_table_rows(all_table_rows)
     print(all_errands)

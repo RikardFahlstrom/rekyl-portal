@@ -13,13 +13,13 @@ class Errand(Base):
     __tablename__ = "errands"
     id = Column(BigInteger, primary_key=True, nullable=False, unique=True)
     created_date = Column(Date, nullable=False)
-    scraped_datetime = Column(DateTime, nullable=False, default=func.current_timestamp())
+    scraped_datetime = Column(DateTime, default=func.current_timestamp())
     rekyl_errand_id = Column(BigInteger, nullable=False)
     errand_status = Column(VARCHAR(length=50), nullable=False)
-    reporter = Column(VARCHAR(length=50), nullable=True, default='N/A')
-    apartment = Column(VARCHAR(length=50), nullable=False, default='N/A')
+    reporter = Column(VARCHAR(length=50), default='N/A')
+    apartment = Column(VARCHAR(length=50), default='N/A')
     errand_type = Column(VARCHAR(length=50), nullable=False)
-    errand_details = Column(Text, nullable=True, default='N/A')
+    errand_details = Column(Text, default='N/A')
 
 
 def create_database_engine(configs):
@@ -61,7 +61,7 @@ def insert_all_errands(db_session, all_errands: List[Dict]):
     session.close()
 
 
-def get_all_errands_statuses(db_session):
+def print_all_errands_statuses(db_session):
     session = db_session()
 
     errand_statuses = session.query(Errand.errand_status).distinct()
@@ -72,7 +72,7 @@ def get_all_errands_statuses(db_session):
     session.close()
 
 
-def get_all_errands_since_date(db_session, start_date):
+def print_all_errands_since_date(db_session, start_date):
     session = db_session()
 
     errands_since_date = session.query(Errand).filter(Errand.created_date >= start_date)
@@ -90,5 +90,5 @@ if __name__ == '__main__':
     engine = create_database_engine(configs)
     create_tables(engine, Base)
     db_session = create_session(engine)
-    get_all_errands_statuses(db_session)
-    get_all_errands_since_date(db_session, '2021-04-20')
+    print_all_errands_statuses(db_session)
+    print_all_errands_since_date(db_session, '2021-04-20')
