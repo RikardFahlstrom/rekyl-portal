@@ -22,8 +22,10 @@ def setup_browser() -> webdriver:
     options.add_argument('--window-size=1920,1080')
     options.add_argument('--disable-gpu')
 
+    # path to local executable file
+    #browser = webdriver.Chrome(executable_path="/Users/rikardfahlstrom/Documents/python_projects/selenium_drivers/chromedriver", options=options)
     browser = webdriver.Remote("http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=options)
-    #browser = webdriver.Remote("http://0.0.0.0:4444/wd/hub", DesiredCapabilities.CHROME, options=options)
+
     logging.info('Browser object created')
 
     return browser
@@ -71,6 +73,17 @@ def get_table_rows_from_soup(page_soup):
     return table_rows
 
 
+def split_row_values_at_colon(row_values):
+    updated_row_values = []
+
+    for value in row_values:
+        splitted_values = value.split(':')
+        for split_value in splitted_values:
+            updated_row_values.append(split_value.strip())
+
+    return updated_row_values
+
+
 def transform_table_rows(all_table_rows) -> List[Dict]:
     all_errands = []
 
@@ -78,10 +91,9 @@ def transform_table_rows(all_table_rows) -> List[Dict]:
         row_values = table_row.find_all('td')  # <td> is table cells
         if len(row_values) > 0:
             row_values = [row_value.text.strip() for row_value in row_values]
-            row_values = [y for x in row_values for y in x.split(':')]
-            row_values[3] = re.sub(' +', ' ', row_values[3])
+            row_values = split_row_values_at_colon(row_values)
+            row_values[3] = re.sub(' +', ' ', row_values[3])  # Replace multiple spaces with single
             row_values = [y for x in row_values for y in x.split('\n\n', 1)]
-            row_values = [value.strip() for value in row_values]
             row_values = list(filter(None, row_values))  # Get rid of empty values
 
             single_errand_data = {
