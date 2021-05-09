@@ -16,14 +16,14 @@ class Errand(Base):
     scraped_datetime = Column(DateTime, default=func.current_timestamp())
     rekyl_errand_id = Column(BigInteger, nullable=False)
     errand_status = Column(VARCHAR(length=50), nullable=False)
-    reporter = Column(VARCHAR(length=50), default='N/A')
-    apartment = Column(VARCHAR(length=50), default='N/A')
+    reporter = Column(VARCHAR(length=50), default="N/A")
+    apartment = Column(VARCHAR(length=50), default="N/A")
     errand_type = Column(VARCHAR(length=50), nullable=False)
-    errand_details = Column(Text, default='N/A')
+    errand_details = Column(Text, default="N/A")
 
 
 def create_database_engine(configs):
-    return sqlalchemy.create_engine(configs['linode_db']['url'], echo=True)
+    return sqlalchemy.create_engine(configs["linode_db"]["url"], echo=True)
 
 
 def create_tables(db_engine, sql_alchemy_base_class):
@@ -36,7 +36,7 @@ def create_session(db_engine):
 
 def describe_db_table(db_engine, table_name):
     with db_engine.connect() as connection:
-        statement = text(f'DESCRIBE {table_name}')
+        statement = text(f"DESCRIBE {table_name}")
         describe = connection.execute(statement)
         for row in describe:
             print(row)
@@ -47,13 +47,13 @@ def insert_all_errands(db_session, all_errands: List[Dict]):
     for errand_raw_data in all_errands:
         errand = Errand()
 
-        errand.created_date = errand_raw_data.get('created_date')
-        errand.rekyl_errand_id = errand_raw_data.get('rekyl_errand_id')
-        errand.errand_status = errand_raw_data.get('errand_status')
-        errand.reporter = errand_raw_data.get('reporter')
-        errand.apartment = errand_raw_data.get('apartment')
-        errand.errand_type = errand_raw_data.get('errand_type')
-        errand.errand_details = errand_raw_data.get('errand_details')
+        errand.created_date = errand_raw_data.get("created_date")
+        errand.rekyl_errand_id = errand_raw_data.get("rekyl_errand_id")
+        errand.errand_status = errand_raw_data.get("errand_status")
+        errand.reporter = errand_raw_data.get("reporter")
+        errand.apartment = errand_raw_data.get("apartment")
+        errand.errand_type = errand_raw_data.get("errand_type")
+        errand.errand_details = errand_raw_data.get("errand_details")
 
         session.add(errand)
 
@@ -83,12 +83,13 @@ def print_all_errands_since_date(db_session, start_date):
         print(f"New errand: {errand} {type(errand)}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from utils import load_config_file, setup_logging
+
     setup_logging()
     configs = load_config_file()
     engine = create_database_engine(configs)
     create_tables(engine, Base)
     db_session = create_session(engine)
     print_all_errands_statuses(db_session)
-    print_all_errands_since_date(db_session, '2021-04-20')
+    print_all_errands_since_date(db_session, "2021-04-20")
