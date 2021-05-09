@@ -11,7 +11,7 @@ def main():
     start_time = datetime.now()
     setup_logging()
     configs = load_config_file()
-    browser = setup_browser()
+    browser = setup_browser(configs)
     soup = download_data(browser, configs)
     all_table_rows = get_table_rows_from_soup(soup)
     all_errands = transform_table_rows(all_table_rows)
