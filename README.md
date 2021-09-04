@@ -1,16 +1,47 @@
-# UFTAB rekyl portal
+# Rekyl portal
 
-rekyl_portal is a tool that allows users to download all errands in a web portal into a MySQL database.
+---
+
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
+rekyl-portal is a tool that allows users to download all errands from a web portal into a MySQL database.
+
+## Installation and usage
+### Installation
+Make sure that `config.ini` is available at the base of the project directory, structured as:
+```yaml
+[rekyl_portal]
+username = abc
+password = 123
+url = https://abc.com
+
+[linode_db]
+url = mysql+pymysql://username:password@ip/db_name
+
+[local_dev]
+chrome_executable_path = local_path_to_chrome_executable
+
+# CONFIGS TO docker-compose.yml
+REKYL_PORTAL_MYSQL_DB=abc
+REKYL_PORTAL_MYSQL_USER=def
+REKYL_PORTAL_MYSQL_PW=ghi
+REKYL_PORTAL_MYSQL_ROOT_PW=jkl
+```
+
+Make sure that Docker is installed.
 
 
-## How to run through Docker
+### Usage
 
-`docker compose up --abort-on-container-exit --build scraper`
+```bash
+docker-compose up --build scraper
+```
 
-Run with `--abort-on-container-exit` to close all containers if one container exits, used to
-close selenium container when the scraper exits.
 Use `--build scraper` to rebuild scraper with the latest changes.
 
-## How to run locally
-- Make sure that the browser is defined through local executable file
-- Remove headless option from browser options
+### Run locally
+- Execute `docker-compose up --build scraper` in order to start the MySQL and Selenium containers
+- Create and activate a virtual environment
+- Install packages from requirements.txt
+- Run `python browser_tools.py`
