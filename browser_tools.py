@@ -14,19 +14,23 @@ from selenium.webdriver.support.ui import Select
 from utils import load_config_file, setup_logging
 
 
-def setup_browser(config_object) -> webdriver:
+def setup_browser(config_object, runs_local=False) -> webdriver:
     options = Options()
 
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--disable-gpu")
 
-    # path to local executable file
-    # new_browser = webdriver.Chrome(executable_path=config_object['local_dev']['chrome_executable_path'], options=options)
-    new_browser = webdriver.Remote(
-        "http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=options
-    )
+    if runs_local:
+
+        new_browser = webdriver.Chrome(
+            executable_path=config_object["local_dev"]["chrome_executable_path"],
+            options=options,
+        )
+    else:
+        options.add_argument("--headless")
+
+        new_browser = webdriver.Remote(
+            "http://chrome:4444/wd/hub", DesiredCapabilities.CHROME, options=options
+        )
 
     logging.info("Browser object created")
 
@@ -125,7 +129,7 @@ def transform_table_rows(table_rows) -> List[Dict]:
 if __name__ == "__main__":
     setup_logging()
     configs = load_config_file()
-    browser = setup_browser(configs)
+    browser = setup_browser(configs, runs_local=True)
     page_soup = download_data(browser, configs)
     all_table_rows = get_table_rows_from_soup(page_soup)
     all_errands = transform_table_rows(all_table_rows)

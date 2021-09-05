@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Dict
 
 import sqlalchemy
@@ -22,8 +23,13 @@ class Errand(Base):
     errand_details = Column(Text, default="N/A")
 
 
-def create_database_engine(configs):
-    return sqlalchemy.create_engine(configs["linode_db"]["url"], echo=True)
+def create_database_engine(config_object, runs_local=False):
+    if runs_local:
+        db_url = config_object["linode_db"]["local_url"]
+    else:
+        db_url = config_object["linode_db"]["url"]
+
+    return sqlalchemy.create_engine(db_url, echo=True)
 
 
 def create_tables(db_engine, sql_alchemy_base_class):
@@ -88,8 +94,9 @@ if __name__ == "__main__":
 
     setup_logging()
     configs = load_config_file()
-    engine = create_database_engine(configs)
+    engine = create_database_engine(configs, runs_local=True)
     create_tables(engine, Base)
     db_session = create_session(engine)
     print_all_errands_statuses(db_session)
-    print_all_errands_since_date(db_session, "2021-04-20")
+    date_two_days_ago = datetime.date.today() - datetime.timedelta(days=2)
+    print_all_errands_since_date(db_session, date_two_days_ago)
