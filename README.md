@@ -21,13 +21,15 @@ url = mysql+pymysql://username:password@ip/db_name
 
 [local_dev]
 chrome_executable_path = local_path_to_chrome_executable
-
-# CONFIGS TO docker-compose.yml
+```
+Make sure that `.env` is available at the base of the project directory, structured as:
+```bash
 REKYL_PORTAL_MYSQL_DB=abc
 REKYL_PORTAL_MYSQL_USER=def
 REKYL_PORTAL_MYSQL_PW=ghi
 REKYL_PORTAL_MYSQL_ROOT_PW=jkl
 ```
+
 
 Make sure that Docker is installed.
 
