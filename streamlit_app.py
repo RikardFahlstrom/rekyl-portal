@@ -63,7 +63,7 @@ st.title("Brf Tripolis")
 password_to_view = st.text_input("Ange lösenord för att se dashboard", type="password")
 
 if password_to_view == st.secrets["dashboard"]["password"]:
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     with col1:
         st.metric(label="Total antal ärenden", value=total_number_of_errands[0][0])
@@ -71,12 +71,6 @@ if password_to_view == st.secrets["dashboard"]["password"]:
     with col2:
         st.metric(
             label="Antal öppna ärenden", value=int(df_open_stats["num errands"].sum())
-        )
-
-    with col3:
-        st.metric(
-            label="Antal stängda ärenden",
-            value=int(df_close_stats["Antal ärenden"].sum()),
         )
 
     st.subheader("Genomsnittligt antal dagar att stänga ett ärende per ärendetyp")
