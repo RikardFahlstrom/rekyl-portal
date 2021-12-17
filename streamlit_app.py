@@ -31,7 +31,7 @@ def init_connection():
     return mysql.connector.connect(**st.secrets["mysql"])
 
 
-@st.cache()
+@st.cache(ttl=600)
 def run_query(query):
     with conn.cursor() as cur:
         cur.execute(query)
